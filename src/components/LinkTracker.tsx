@@ -31,16 +31,18 @@ export default function LinkTracker() {
     setErrorMessage("");
     setMatchedProduct(null);
 
-    if (!link.trim()) {
+    const trimmedLink = link.trim();
+
+    if (!trimmedLink) {
       setStatus("error");
       setErrorMessage("Lütfen geçerli bir e-ticaret ürün linki yapıştırın.");
       return;
     }
 
     // Regex checks
-    const isTrendyol = /trendyol\.com/i.test(link);
-    const isHepsiburada = /hepsiburada\.com/i.test(link);
-    const isAmazon = /amazon\.com/i.test(link) || /amazon\.com\.tr/i.test(link);
+    const isTrendyol = /trendyol\.com/i.test(trimmedLink);
+    const isHepsiburada = /hepsiburada\.com/i.test(trimmedLink);
+    const isAmazon = /amazon\.com/i.test(trimmedLink) || /amazon\.com\.tr/i.test(trimmedLink);
 
     if (!isTrendyol && !isHepsiburada && !isAmazon) {
       setStatus("error");
@@ -67,7 +69,7 @@ export default function LinkTracker() {
     await new Promise((resolve) => setTimeout(resolve, 800));
 
     // Match keywords in URL to catalog
-    const url = link.toLowerCase();
+    const url = trimmedLink.toLowerCase();
     let productMatch = null;
 
     if (url.includes("airpods") || url.includes("kulaklik") || url.includes("sound") || url.includes("wh-1000")) {
@@ -123,7 +125,7 @@ export default function LinkTracker() {
               <LinkIcon className="w-4 h-4" />
             </div>
             <input
-              type="url"
+              type="text"
               value={link}
               onChange={(e) => setLink(e.target.value)}
               disabled={status === "validating" || status === "scanning" || status === "matching"}
