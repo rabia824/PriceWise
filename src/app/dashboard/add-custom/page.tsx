@@ -57,10 +57,26 @@ export default function AddCustomProductPage() {
   // Pricing estimator based on product name keywords
   const estimateBasePrice = (productName: string): number => {
     const t = productName.toLowerCase();
-    if (t.includes("süt") || t.includes("milk")) return 45;
+
+    // Check for grocery / basic consumption items first (süt, su, ekmek, krem, gıda, vb.)
+    if (
+      t.includes("süt") || t.includes("sut") || t.includes("milk") ||
+      t.includes("su") || t.includes("water") ||
+      t.includes("ekmek") || t.includes("bread") ||
+      t.includes("krem") || t.includes("cream") ||
+      t.includes("gıda") || t.includes("gida") || t.includes("food") ||
+      t.includes("yağ") || t.includes("yag") || t.includes("oil") ||
+      t.includes("un") || t.includes("flour") ||
+      t.includes("tuz") || t.includes("salt") ||
+      t.includes("şeker") || t.includes("seker") || t.includes("sugar")
+    ) {
+      // Return a realistic, closely bounded price between ₺15 and ₺80
+      const charSum = productName.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
+      return 15 + (charSum % 66); // 15 + (0 to 65) = 15 to 80 TL
+    }
+
     if (t.includes("peynir") || t.includes("cheese")) return 180;
-    if (t.includes("ekmek") || t.includes("bread")) return 15;
-    if (t.includes("güneş kremi") || t.includes("sunscreen") || t.includes("krem")) return 450;
+    if (t.includes("güneş kremi") || t.includes("sunscreen")) return 450;
     if (t.includes("telefon") || t.includes("iphone") || t.includes("samsung")) return 65000;
     if (t.includes("kulaklık") || t.includes("airpods") || t.includes("sony")) return 7500;
     if (t.includes("mouse") || t.includes("klavye") || t.includes("logitech")) return 3200;
