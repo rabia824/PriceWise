@@ -8,6 +8,7 @@ import { useFavoritesStore } from "@/store/useFavoritesStore";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import Link from "next/link";
+import LinkTracker from "@/components/LinkTracker";
 import {
   Search,
   TrendingDown,
@@ -90,6 +91,11 @@ export default function DashboardPage() {
               <Search className="w-3.5 h-3.5" />
             </Link>
           </div>
+        </div>
+
+        {/* E-Commerce Link Tracker */}
+        <div className="max-w-3xl mx-auto w-full">
+          <LinkTracker />
         </div>
 
         {/* Stats Grid */}

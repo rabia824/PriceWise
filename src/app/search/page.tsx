@@ -6,6 +6,8 @@ import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import Link from "next/link";
 import { Search, ChevronRight, SlidersHorizontal, Tag, Layers } from "lucide-react";
+import LinkTracker from "@/components/LinkTracker";
+
 
 export default function SearchPage() {
   const { searchResults, searchQuery, setSearchQuery, searchProducts, initializeStore } = useSearchStore();
@@ -47,7 +49,8 @@ export default function SearchPage() {
         </div>
 
         {/* Search Bar & Filters */}
-        <div className="max-w-3xl mx-auto space-y-4">
+        <div className="max-w-3xl mx-auto space-y-6">
+          <LinkTracker />
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted">
               <Search className="w-5 h-5" />
