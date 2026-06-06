@@ -6,6 +6,60 @@ import { useFavoritesStore } from "@/store/useFavoritesStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
 import ProductImage from "@/components/ProductImage";
+import { estimateProductBasePrice } from "@/lib/priceHelper";
+
+// Utility to extract and format product title from Trendyol, Hepsiburada, and Amazon URLs
+function parseProductUrl(urlStr: string): string {
+  const url = urlStr.split("?")[0].split("#")[0].toLowerCase();
+  let slug = "";
+
+  // 1. Trendyol Match (e.g., /marka/urun-adi-p-123456)
+  const matchTy = url.match(/\/([^/]+)-p-\d+/);
+  if (matchTy && matchTy[1]) {
+    slug = matchTy[1];
+  }
+  
+  // 2. Hepsiburada Match (e.g., /urun-adi-p-HBV00000XYZ)
+  if (!slug) {
+    const matchHb = url.match(/\/([^/]+)-p-[a-zA-Z0-9]+/);
+    if (matchHb && matchHb[1]) {
+      slug = matchHb[1];
+    }
+  }
+  
+  // 3. Amazon Match (e.g., /urun-adi/dp/B00XYZ)
+  if (!slug) {
+    const matchAz = url.match(/\/([^/]+)\/dp\/[a-zA-Z0-9]+/);
+    if (matchAz && matchAz[1]) {
+      slug = matchAz[1];
+    }
+  }
+  
+  // 4. Fallback: Get the last segment
+  if (!slug) {
+    const cleanUrl = url.replace(/\/$/, "");
+    const parts = cleanUrl.split("/");
+    slug = parts[parts.length - 1] || "e-ticaret-urun";
+  }
+
+  // Clean slug
+  let cleaned = decodeURIComponent(slug)
+    .replace(/[-_]+/g, " ")
+    .trim();
+
+  // Remove potential trailing id tags
+  cleaned = cleaned.replace(/\s+p\s+\d+$/i, "");
+  cleaned = cleaned.replace(/\s+p\s+[a-z0-9]+$/i, "");
+  cleaned = cleaned.replace(/\s+dp\s+[a-z0-9]+$/i, "");
+
+  // Capitalize words
+  const title = cleaned
+    .split(/\s+/)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+
+  return title || "E-Ticaret Ürünü";
+}
 import {
   Link as LinkIcon,
   Sparkles,
@@ -69,40 +123,35 @@ export default function LinkTracker() {
     setStatus("matching");
     await new Promise((resolve) => setTimeout(resolve, 800));
 
-    // Match keywords in URL to catalog
-    const url = trimmedLink.toLowerCase();
-    let productMatch = null;
+    // Parse URL slug dynamically
+    const parsedTitle = parseProductUrl(trimmedLink);
+    const basePrice = estimateProductBasePrice(parsedTitle);
+    
+    // Create unique product ID based on title
+    const charSum = parsedTitle.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
+    const productId = `dynamic-link-${charSum}`;
 
-    if (url.includes("airpods") || url.includes("kulaklik") || url.includes("sound") || url.includes("wh-1000")) {
-      productMatch = products.find((p) => p.id === "airpods-pro") || products.find((p) => p.id === "sony-wh1000xm5");
-    } else if (url.includes("termos") || url.includes("stanley") || url.includes("mug")) {
-      productMatch = products.find((p) => p.id === "stanley-thermos");
-    } else if (url.includes("krem") || url.includes("sunscreen") || url.includes("gunes") || url.includes("sebamed") || url.includes("nivea")) {
-      // Find sunscreen or default
-      productMatch = products.find((p) => p.category.includes("Kozmetik")) || products.find((p) => p.id === "stanley-thermos");
-    } else if (url.includes("iphone") || url.includes("telefon") || url.includes("mobile") || url.includes("samsung")) {
-      productMatch = products.find((p) => p.id === "iphone-17-pro");
-    } else if (url.includes("mouse") || url.includes("klavye") || url.includes("logitech") || url.includes("g502")) {
-      productMatch = products.find((p) => p.id === "logitech-g502");
-    } else if (url.includes("tablet") || url.includes("ipad") || url.includes("m4")) {
-      productMatch = products.find((p) => p.id === "ipad-pro-m4");
-    }
+    const newProduct = {
+      id: productId,
+      title: parsedTitle,
+      brand: parsedTitle.split(" ")[0] || "Özel",
+      category: parsedTitle.toLowerCase().includes("termos") ? "Ev / Yaşam" : "Genel / Arama",
+      imageUrl: `https://source.unsplash.com/featured/600x400/?${encodeURIComponent(parsedTitle.toLowerCase())}`,
+      description: `E-Ticaret mağazasından taranan "${parsedTitle}" ürünü için anlık fiyat takip bilgileri.`,
+      basePrice: basePrice,
+      isCustom: true, // Flag as custom so the store populates scaled pricing in details page
+    };
 
-    // Fallback: Pick a random catalog product
-    if (!productMatch && products.length > 0) {
-      const randomIndex = Math.floor(Math.random() * products.length);
-      productMatch = products[randomIndex];
-    }
+    // Inject custom product into Zustand state catalog
+    useSearchStore.setState((state) => {
+      const exists = state.products.some((p) => p.id === productId);
+      if (exists) return state;
+      return { products: [...state.products, newProduct] };
+    });
 
-    if (!productMatch) {
-      setStatus("error");
-      setErrorMessage("Katalogda uygun eşleşen ürün bulunamadı. Lütfen daha sonra tekrar deneyin.");
-      return;
-    }
-
-    // Auto-favorite the matched product
-    await addFavorite(productMatch.id);
-    setMatchedProduct(productMatch);
+    // Auto-favorite the dynamically registered product
+    await addFavorite(productId);
+    setMatchedProduct(newProduct);
     setStatus("success");
     setLink("");
   };
