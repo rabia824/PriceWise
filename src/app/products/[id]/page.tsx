@@ -11,6 +11,7 @@ import PriceTrendChart from "@/components/PriceTrendChart";
 import ComparisonMatrix from "@/components/ComparisonMatrix";
 import SavingRecommendation from "@/components/SavingRecommendation";
 import Link from "next/link";
+import ProductImage from "@/components/ProductImage";
 import {
   Heart,
   ChevronLeft,
@@ -92,9 +93,8 @@ export default function ProductDetailPage({
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
           {/* Left Column: Image */}
           <div className="md:col-span-4 bg-card border border-border rounded-xl p-5 shadow-sm flex items-center justify-center aspect-square md:aspect-auto md:h-[280px]">
-            <img
-              src={activeProduct.imageUrl}
-              alt={activeProduct.title}
+            <ProductImage
+              title={activeProduct.title}
               className="w-full h-full object-contain rounded-lg max-h-[240px]"
             />
           </div>

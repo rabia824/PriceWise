@@ -7,6 +7,7 @@ import { useSearchStore } from "@/store/useSearchStore";
 import { useFavoritesStore } from "@/store/useFavoritesStore";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import ProductImage from "@/components/ProductImage";
 import Link from "next/link";
 import {
   Heart,
@@ -107,9 +108,8 @@ export default function FavoritesPage() {
                 >
                   {/* Left: Image */}
                   <div className="w-24 h-24 sm:w-28 sm:h-28 flex-shrink-0 bg-muted/20 rounded-xl p-2 flex items-center justify-center border border-border/60">
-                    <img
-                      src={p.imageUrl}
-                      alt={p.title}
+                    <ProductImage
+                      title={p.title}
                       className="w-full h-full object-contain rounded-lg"
                     />
                   </div>

@@ -9,6 +9,7 @@ import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import Link from "next/link";
 import LinkTracker from "@/components/LinkTracker";
+import ProductImage from "@/components/ProductImage";
 import {
   Search,
   TrendingDown,
@@ -184,10 +185,9 @@ export default function DashboardPage() {
                     href={`/products/${p.id}`}
                     className="flex bg-card border border-border hover:border-primary/20 rounded-xl p-4 premium-card space-x-3 items-center group"
                   >
-                    <img
-                      src={p.imageUrl}
-                      alt={p.title}
-                      className="w-12 h-12 object-cover rounded-lg bg-muted/20"
+                    <ProductImage
+                      title={p.title}
+                      className="w-12 h-12 object-cover rounded-lg bg-muted/20 flex-shrink-0"
                     />
                     <div className="flex-grow min-w-0 space-y-0.5">
                       <h4 className="font-bold text-xs text-foreground truncate group-hover:text-primary transition-colors">

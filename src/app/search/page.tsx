@@ -7,6 +7,7 @@ import Footer from "@/components/footer";
 import Link from "next/link";
 import { Search, ChevronRight, SlidersHorizontal, Tag, Layers } from "lucide-react";
 import LinkTracker from "@/components/LinkTracker";
+import ProductImage from "@/components/ProductImage";
 
 
 export default function SearchPage() {
@@ -117,9 +118,8 @@ export default function SearchPage() {
                 >
                   {/* Product Image */}
                   <div className="relative aspect-video w-full overflow-hidden bg-muted/20 border-b border-border">
-                    <img
-                      src={p.imageUrl}
-                      alt={p.title}
+                    <ProductImage
+                      title={p.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-md text-[10px] font-bold text-white uppercase tracking-wider flex items-center space-x-1 border border-white/10">

@@ -5,6 +5,7 @@ import { useSearchStore } from "@/store/useSearchStore";
 import { useFavoritesStore } from "@/store/useFavoritesStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
+import ProductImage from "@/components/ProductImage";
 import {
   Link as LinkIcon,
   Sparkles,
@@ -180,9 +181,8 @@ export default function LinkTracker() {
             
             <div className="flex bg-card border border-border/60 rounded-lg p-3 items-center justify-between">
               <div className="flex items-center space-x-3 min-w-0">
-                <img
-                  src={matchedProduct.imageUrl}
-                  alt={matchedProduct.title}
+                <ProductImage
+                  title={matchedProduct.title}
                   className="w-10 h-10 object-cover rounded bg-muted/20 flex-shrink-0"
                 />
                 <div className="min-w-0">
