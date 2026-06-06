@@ -1,74 +1,40 @@
 /**
  * PriceWise - Product Image Helper
- * Generates dynamic Unsplash/LoremFlickr URLs based on keywords, 
- * with robust smart fallback options.
+ * Generates a deterministic high-fidelity Unsplash CDN URL based on title keywords
+ * to ensure 100% presentation safety.
  */
 
 export function getProductImageUrls(title: string) {
   const cleanTitle = title.toLowerCase();
 
-  // 1. Primary Dynamic URL (Using LoremFlickr which serves search query keywords from Unsplash and CC sources)
-  // Split title to extract the main keywords (e.g. "iPhone 17 Pro" -> "iphone")
-  const words = title.trim().split(/\s+/);
-  const keyword = encodeURIComponent(words[0] || "product");
-  const dynamicUrl = `https://loremflickr.com/600/400/${keyword}`;
-
-  // 2. Secondary Dynamic Unsplash Query URL
-  const unsplashUrl = `https://source.unsplash.com/featured/600x400/?${keyword}`;
-
-  // 3. Smart Fallback URLs (Real high-fidelity direct Unsplash photos hosted on CDN)
-  let fallbackUrl = "https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&auto=format&fit=crop&q=60"; // shopping / box fallback
+  // Default: Genel alışveriş görseli
+  let targetUrl = "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=600&auto=format&fit=crop";
 
   if (
     cleanTitle.includes("termos") || 
-    cleanTitle.includes("stanley") || 
-    cleanTitle.includes("mug") || 
-    cleanTitle.includes("flask")
+    cleanTitle.includes("stanley")
   ) {
-    fallbackUrl = "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=600&auto=format&fit=crop&q=60"; // termos
+    // Termos görseli
+    targetUrl = "https://images.unsplash.com/photo-1619814406859-99a38f3876be?q=80&w=600&auto=format&fit=crop";
   } else if (
     cleanTitle.includes("krem") || 
-    cleanTitle.includes("sunscreen") || 
-    cleanTitle.includes("gunes") || 
-    cleanTitle.includes("sebamed") || 
-    cleanTitle.includes("kozmetik") || 
-    cleanTitle.includes("cream")
+    cleanTitle.includes("güneş") || 
+    cleanTitle.includes("gunes")
   ) {
-    fallbackUrl = "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&auto=format&fit=crop&q=60"; // krem
+    // Krem/Güneş kremi görseli
+    targetUrl = "https://images.unsplash.com/photo-1556228720-195a672e8a03?q=80&w=600&auto=format&fit=crop";
   } else if (
-    cleanTitle.includes("iphone") || 
-    cleanTitle.includes("telefon") || 
-    cleanTitle.includes("mobile") || 
-    cleanTitle.includes("samsung") || 
-    cleanTitle.includes("phone")
-  ) {
-    fallbackUrl = "https://images.unsplash.com/photo-1616348436168-de43ad0db179?w=600&auto=format&fit=crop&q=60"; // telefon
-  } else if (
+    cleanTitle.includes("kulaklık") || 
     cleanTitle.includes("kulaklik") || 
-    cleanTitle.includes("airpods") || 
-    cleanTitle.includes("sound") || 
-    cleanTitle.includes("sony") || 
-    cleanTitle.includes("headphones")
+    cleanTitle.includes("airpods")
   ) {
-    fallbackUrl = "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=60"; // kulaklık
-  } else if (
-    cleanTitle.includes("mouse") || 
-    cleanTitle.includes("klavye") || 
-    cleanTitle.includes("logitech") || 
-    cleanTitle.includes("gaming")
-  ) {
-    fallbackUrl = "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=600&auto=format&fit=crop&q=60"; // mouse
-  } else if (
-    cleanTitle.includes("tablet") || 
-    cleanTitle.includes("ipad") || 
-    cleanTitle.includes("screen")
-  ) {
-    fallbackUrl = "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=600&auto=format&fit=crop&q=60"; // tablet
+    // Kulaklık/Airpods görseli
+    targetUrl = "https://images.unsplash.com/photo-1588444837495-c6cfcb53ba91?q=80&w=600&auto=format&fit=crop";
   }
 
   return {
-    dynamicUrl,
-    unsplashUrl,
-    fallbackUrl,
+    dynamicUrl: targetUrl,
+    unsplashUrl: targetUrl,
+    fallbackUrl: targetUrl,
   };
 }
