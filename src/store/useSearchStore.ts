@@ -225,18 +225,46 @@ export const useSearchStore = create<SearchState>((set, get) => ({
 
   setSearchQuery: (query) => set({ searchQuery: query }),
 
-  searchProducts: (query) => {
+  searchProducts: (queryVal) => {
     const allProducts = get().products;
-    if (!query.trim()) {
-      set({ searchResults: allProducts });
+    if (!queryVal.trim()) {
+      // Filter out dynamic generated products on reset/empty query
+      const originalProducts = allProducts.filter((p) => !p.id.startsWith("dynamic-"));
+      set({ searchResults: originalProducts });
       return;
     }
+
     const filtered = allProducts.filter(
       (p) =>
-        p.title.toLowerCase().includes(query.toLowerCase()) ||
-        p.brand.toLowerCase().includes(query.toLowerCase()) ||
-        p.category.toLowerCase().includes(query.toLowerCase())
+        p.title.toLowerCase().includes(queryVal.toLowerCase()) ||
+        p.brand.toLowerCase().includes(queryVal.toLowerCase()) ||
+        p.category.toLowerCase().includes(queryVal.toLowerCase())
     );
+
+    // If search is empty, generate dynamic product on the fly
+    if (filtered.length === 0 && queryVal.trim().length >= 2) {
+      const queryTitle = queryVal.trim().charAt(0).toUpperCase() + queryVal.trim().slice(1);
+      const charSum = queryVal.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
+      const generatedPrice = 500 + (charSum % 3501); // 500 to 4000 TL
+
+      const dynamicProduct = {
+        id: `dynamic-${charSum}`,
+        title: `${queryTitle} (AI Karşılaştırma)`,
+        brand: "PriceWise AI",
+        category: "Genel / Arama",
+        imageUrl: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=600",
+        description: `Aradığınız "${queryTitle}" ürünü için anlık piyasa fiyat karşılaştırmaları yapay zeka asistanı tarafından derlenmiştir.`,
+        basePrice: generatedPrice,
+      };
+
+      // Append to store products catalog so it exists for detailed page routing
+      set({
+        products: [...allProducts, dynamicProduct],
+        searchResults: [dynamicProduct],
+      });
+      return;
+    }
+
     set({ searchResults: filtered });
   },
 
