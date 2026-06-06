@@ -99,6 +99,23 @@ export default function DashboardPage() {
           <LinkTracker />
         </div>
 
+        {/* PriceWise AI Öneri Kutusu */}
+        <div className="max-w-3xl mx-auto w-full bg-gradient-to-r from-primary/15 via-accent/10 to-primary/5 border border-primary/20 rounded-xl p-5 shadow-sm space-y-3 relative overflow-hidden">
+          <div className="absolute right-0 top-0 w-32 h-32 bg-primary/10 blur-2xl rounded-full pointer-events-none" />
+          <div className="flex items-center space-x-2 text-primary font-bold text-sm">
+            <Sparkles className="w-5 h-5 text-primary animate-pulse" />
+            <span>PriceWise AI Önerisi</span>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 border border-primary/15 font-black uppercase tracking-wider text-primary ml-2">
+              Akıllı Analiz
+            </span>
+          </div>
+          <p className="text-xs sm:text-sm text-foreground/90 leading-relaxed font-medium">
+            Takip ettiğiniz ürünlerde bu hafta ortalama <strong className="text-success font-black">%7 fiyat düşüşü</strong> tespit edildi. 
+            <strong> Stanley Termos</strong> şu an son 30 günün en düşük seviyesinde (<strong className="text-success font-black">₺1.631</strong>). 
+            Eğer satın almayı düşünüyorsanız, bütçeniz için en ideal dönemdesiniz!
+          </p>
+        </div>
+
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Card 1: Total Searches */}
