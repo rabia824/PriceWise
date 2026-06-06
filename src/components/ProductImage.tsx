@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { getProductImageUrls } from "@/lib/imageHelper";
+import React from "react";
 
 interface ProductImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   title: string;
@@ -9,35 +8,27 @@ interface ProductImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
 }
 
 export default function ProductImage({ title, className, ...props }: ProductImageProps) {
-  const { dynamicUrl, unsplashUrl, fallbackUrl } = getProductImageUrls(title);
-  const [src, setSrc] = useState<string>(dynamicUrl);
-  const [attempt, setAttempt] = useState<number>(1); // 1 = dynamicUrl, 2 = unsplashUrl, 3 = fallbackUrl
+  // Simple and direct JavaScript logic to override image based on title/name
+  const productName = (title || "").toLowerCase();
+  let displayImage = "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=600"; // default genel alışveriş resmi
 
-  // Reset when title changes
-  useEffect(() => {
-    setSrc(dynamicUrl);
-    setAttempt(1);
-  }, [title, dynamicUrl]);
+  if (productName.includes("termos") || productName.includes("stanley")) {
+    displayImage = "https://images.unsplash.com/photo-1619814406859-99a38f3876be?q=80&w=600";
+  } else if (productName.includes("krem") || productName.includes("güneş") || productName.includes("sunscreen")) {
+    displayImage = "https://images.unsplash.com/photo-1556228720-195a672e8a03?q=80&w=600";
+  } else if (productName.includes("airpods") || productName.includes("kulaklık")) {
+    displayImage = "https://images.unsplash.com/photo-1588444837495-c6cfcb53ba91?q=80&w=600";
+  }
 
-  const handleError = () => {
-    if (attempt === 1) {
-      // Try secondary dynamic source
-      setSrc(unsplashUrl);
-      setAttempt(2);
-    } else if (attempt === 2) {
-      // Fallback to static CDN photo
-      setSrc(fallbackUrl);
-      setAttempt(3);
-    }
-  };
+  // Override src and alt to ensure the hardcoded image mapping is enforced
+  const { src, alt, ...restProps } = props;
 
   return (
     <img
-      src={src}
-      alt={title}
+      src={displayImage}
+      alt={title || "Product"}
       className={className}
-      onError={handleError}
-      {...props}
+      {...restProps}
     />
   );
 }
