@@ -22,6 +22,8 @@ export default function ProductImage({ title, className, ...props }: ProductImag
     displayImage = "https://images.unsplash.com/photo-1695048133142-1a20484d2569?q=80&w=600";
   } else if (productName.includes("mouse") || productName.includes("logitech")) {
     displayImage = "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?q=80&w=600";
+  } else if (productName.includes("koltuk") || productName.includes("sofa") || productName.includes("modern")) {
+    displayImage = "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=600";
   }
 
   // Override src and alt to ensure the hardcoded image mapping is enforced

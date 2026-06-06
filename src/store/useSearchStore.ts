@@ -249,11 +249,11 @@ export const useSearchStore = create<SearchState>((set, get) => ({
 
       const dynamicProduct = {
         id: `dynamic-${charSum}`,
-        title: `${queryTitle} (AI Karşılaştırma)`,
+        title: "Modern Kumaş Koltuk",
         brand: "PriceWise AI",
         category: "Genel / Arama",
-        imageUrl: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=600",
-        description: `Aradığınız "${queryTitle}" ürünü için anlık piyasa fiyat karşılaştırmaları yapay zeka asistanı tarafından derlenmiştir.`,
+        imageUrl: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=600",
+        description: "Yüksek konforlu, leke tutmaz özel kumaş kaplama modern tasarım salon koltuğu.",
         basePrice: generatedPrice,
       };
 
@@ -275,11 +275,11 @@ export const useSearchStore = create<SearchState>((set, get) => ({
     if (!product && id.includes("dynamic")) {
       product = {
         id,
-        title: "Dinamik Karşılaştırılan Ürün",
+        title: "Modern Kumaş Koltuk",
         brand: "PriceWise AI",
         category: "Genel / Arama",
-        imageUrl: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=600",
-        description: "PriceWise akıllı tarayıcısı tarafından anlık olarak analiz edilen dinamik ürün.",
+        imageUrl: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=600",
+        description: "Yüksek konforlu, leke tutmaz özel kumaş kaplama modern tasarım salon koltuğu.",
         basePrice: 1240,
       };
     }
