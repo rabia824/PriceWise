@@ -3,6 +3,7 @@
 import { create } from "zustand";
 import { db, isFirebaseConfigured } from "@/lib/firebase";
 import { useAuthStore } from "./useAuthStore";
+import { estimateProductBasePrice } from "@/lib/priceHelper";
 import {
   collection,
   getDocs,
@@ -245,7 +246,7 @@ export const useSearchStore = create<SearchState>((set, get) => ({
     if (filtered.length === 0 && queryVal.trim().length >= 2) {
       const queryTitle = queryVal.trim().charAt(0).toUpperCase() + queryVal.trim().slice(1);
       const charSum = queryVal.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
-      const generatedPrice = 500 + (charSum % 3501); // 500 to 4000 TL
+      const generatedPrice = estimateProductBasePrice(queryVal);
 
       const dynamicProduct = {
         id: `dynamic-${charSum}`,
@@ -275,6 +276,7 @@ export const useSearchStore = create<SearchState>((set, get) => ({
     if (!product && id.includes("dynamic")) {
       const lastQuery = get().searchQuery || "ürün";
       const queryTitle = lastQuery.trim().charAt(0).toUpperCase() + lastQuery.trim().slice(1);
+      const generatedPrice = estimateProductBasePrice(lastQuery);
 
       product = {
         id,
@@ -283,7 +285,7 @@ export const useSearchStore = create<SearchState>((set, get) => ({
         category: "Genel / Arama",
         imageUrl: `https://source.unsplash.com/featured/600x400/?${encodeURIComponent(lastQuery.trim().toLowerCase())}`,
         description: `PriceWise akıllı tarayıcısı tarafından anlık olarak analiz edilen dinamik ${lastQuery.trim().toLowerCase()}.`,
-        basePrice: 1240,
+        basePrice: generatedPrice,
       };
     }
 
@@ -299,16 +301,22 @@ export const useSearchStore = create<SearchState>((set, get) => ({
     let savings = 0;
 
     if (product.id.includes("dynamic")) {
+      const base = product.basePrice;
+      const ap = Math.round(base * 0.96);
+      const tp = Math.round(base * 1.01);
+      const hp = Math.round(base * 1.03);
+      const np = Math.round(base * 1.06);
+
       formattedMarketplaces = [
-        { marketplace: "Amazon", price: 1190, difference: "En Ucuz", isCheapest: true, link: "https://www.amazon.com.tr" },
-        { marketplace: "Trendyol", price: 1250, difference: "+₺60", isCheapest: false, link: "https://www.trendyol.com" },
-        { marketplace: "Hepsiburada", price: 1280, difference: "+₺90", isCheapest: false, link: "https://www.hepsiburada.com" },
-        { marketplace: "N11", price: 1320, difference: "+₺130", isCheapest: false, link: "https://www.n11.com" },
+        { marketplace: "Amazon", price: ap, difference: "En Ucuz", isCheapest: true, link: "https://www.amazon.com.tr" },
+        { marketplace: "Trendyol", price: tp, difference: `+₺${(tp - ap).toLocaleString("tr-TR")}`, isCheapest: false, link: "https://www.trendyol.com" },
+        { marketplace: "Hepsiburada", price: hp, difference: `+₺${(hp - ap).toLocaleString("tr-TR")}`, isCheapest: false, link: "https://www.hepsiburada.com" },
+        { marketplace: "N11", price: np, difference: `+₺${(np - ap).toLocaleString("tr-TR")}`, isCheapest: false, link: "https://www.n11.com" },
       ];
-      lowestPrice = 1190;
-      highestPrice = 1320;
-      avgPrice = 1260;
-      savings = 130;
+      lowestPrice = ap;
+      highestPrice = np;
+      avgPrice = Math.round((tp + ap + hp + np) / 4);
+      savings = np - ap;
     } else if (product.marketplaces && product.isCustom) {
       const marketplaces = [...product.marketplaces];
       marketplaces.sort((a, b) => a.price - b.price);
