@@ -249,11 +249,11 @@ export const useSearchStore = create<SearchState>((set, get) => ({
 
       const dynamicProduct = {
         id: `dynamic-${charSum}`,
-        title: "Modern Kumaş Koltuk",
+        title: queryTitle,
         brand: "PriceWise AI",
         category: "Genel / Arama",
-        imageUrl: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=600",
-        description: "Yüksek konforlu, leke tutmaz özel kumaş kaplama modern tasarım salon koltuğu.",
+        imageUrl: `https://source.unsplash.com/featured/600x400/?${encodeURIComponent(queryVal.trim().toLowerCase())}`,
+        description: `PriceWise akıllı tarayıcısı tarafından anlık olarak analiz edilen dinamik ${queryVal.trim().toLowerCase()}.`,
         basePrice: generatedPrice,
       };
 
@@ -273,13 +273,16 @@ export const useSearchStore = create<SearchState>((set, get) => ({
 
     // Catch / fallback for dynamic search cards
     if (!product && id.includes("dynamic")) {
+      const lastQuery = get().searchQuery || "ürün";
+      const queryTitle = lastQuery.trim().charAt(0).toUpperCase() + lastQuery.trim().slice(1);
+
       product = {
         id,
-        title: "Modern Kumaş Koltuk",
+        title: queryTitle,
         brand: "PriceWise AI",
         category: "Genel / Arama",
-        imageUrl: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=600",
-        description: "Yüksek konforlu, leke tutmaz özel kumaş kaplama modern tasarım salon koltuğu.",
+        imageUrl: `https://source.unsplash.com/featured/600x400/?${encodeURIComponent(lastQuery.trim().toLowerCase())}`,
+        description: `PriceWise akıllı tarayıcısı tarafından anlık olarak analiz edilen dinamik ${lastQuery.trim().toLowerCase()}.`,
         basePrice: 1240,
       };
     }
