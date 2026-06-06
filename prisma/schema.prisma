@@ -1,0 +1,59 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id             String          @id @default(uuid())
+  full_name      String
+  email          String          @unique
+  password_hash  String
+  created_at     DateTime        @default(now())
+  search_history SearchHistory[]
+  favorites      Favorite[]
+}
+
+model Product {
+  id             String          @id @default(uuid())
+  title          String
+  brand          String
+  category       String
+  image_url      String
+  description    String
+  price_records  PriceRecord[]
+  search_history SearchHistory[]
+  favorites      Favorite[]
+}
+
+model PriceRecord {
+  id          String   @id @default(uuid())
+  product_id  String
+  product     Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  marketplace String
+  price       Float
+  created_at  DateTime @default(now())
+}
+
+model SearchHistory {
+  id          String   @id @default(uuid())
+  user_id     String
+  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  product_id  String
+  product     Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  searched_at DateTime @default(now())
+}
+
+model Favorite {
+  id         String   @id @default(uuid())
+  user_id    String
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  product_id String
+  product    Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+
+  @@unique([user_id, product_id])
+}
