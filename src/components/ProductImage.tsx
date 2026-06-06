@@ -18,6 +18,10 @@ export default function ProductImage({ title, className, ...props }: ProductImag
     displayImage = "https://images.unsplash.com/photo-1556228720-195a672e8a03?q=80&w=600";
   } else if (productName.includes("airpods") || productName.includes("kulaklık")) {
     displayImage = "https://images.unsplash.com/photo-1588444837495-c6cfcb53ba91?q=80&w=600";
+  } else if (productName.includes("iphone")) {
+    displayImage = "https://images.unsplash.com/photo-1695048133142-1a20484d2569?q=80&w=600";
+  } else if (productName.includes("mouse") || productName.includes("logitech")) {
+    displayImage = "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?q=80&w=600";
   }
 
   // Override src and alt to ensure the hardcoded image mapping is enforced
