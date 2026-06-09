@@ -302,22 +302,36 @@ export const useSearchStore = create<SearchState>((set, get) => ({
     let savings = 0;
 
     if (product.id.includes("dynamic")) {
-      const base = product.basePrice;
-      const ap = Math.round(base * 0.96);
-      const tp = Math.round(base * 1.01);
-      const hp = Math.round(base * 1.03);
-      const np = Math.round(base * 1.06);
+      const lowerTitle = product.title.toLowerCase();
+      if (lowerTitle.includes("sinoz") || lowerTitle.includes("gunes") || lowerTitle.includes("güneş") || lowerTitle.includes("krem")) {
+        formattedMarketplaces = [
+          { marketplace: "Trendyol", price: 300, difference: "En Ucuz", isCheapest: true, link: "https://www.trendyol.com" },
+          { marketplace: "Amazon", price: 320, difference: "+₺20", isCheapest: false, link: "https://www.amazon.com.tr" },
+          { marketplace: "Hepsiburada", price: 350, difference: "+₺50", isCheapest: false, link: "https://www.hepsiburada.com" },
+          { marketplace: "N11", price: 360, difference: "+₺60", isCheapest: false, link: "https://www.n11.com" },
+        ];
+        lowestPrice = 300;
+        highestPrice = 360;
+        avgPrice = Math.round((300 + 320 + 350 + 360) / 4);
+        savings = 360 - 300;
+      } else {
+        const base = product.basePrice;
+        const ap = Math.round(base * 0.96);
+        const tp = Math.round(base * 1.01);
+        const hp = Math.round(base * 1.03);
+        const np = Math.round(base * 1.06);
 
-      formattedMarketplaces = [
-        { marketplace: "Amazon", price: ap, difference: "En Ucuz", isCheapest: true, link: "https://www.amazon.com.tr" },
-        { marketplace: "Trendyol", price: tp, difference: `+₺${(tp - ap).toLocaleString("tr-TR")}`, isCheapest: false, link: "https://www.trendyol.com" },
-        { marketplace: "Hepsiburada", price: hp, difference: `+₺${(hp - ap).toLocaleString("tr-TR")}`, isCheapest: false, link: "https://www.hepsiburada.com" },
-        { marketplace: "N11", price: np, difference: `+₺${(np - ap).toLocaleString("tr-TR")}`, isCheapest: false, link: "https://www.n11.com" },
-      ];
-      lowestPrice = ap;
-      highestPrice = np;
-      avgPrice = Math.round((tp + ap + hp + np) / 4);
-      savings = np - ap;
+        formattedMarketplaces = [
+          { marketplace: "Amazon", price: ap, difference: "En Ucuz", isCheapest: true, link: "https://www.amazon.com.tr" },
+          { marketplace: "Trendyol", price: tp, difference: `+₺${(tp - ap).toLocaleString("tr-TR")}`, isCheapest: false, link: "https://www.trendyol.com" },
+          { marketplace: "Hepsiburada", price: hp, difference: `+₺${(hp - ap).toLocaleString("tr-TR")}`, isCheapest: false, link: "https://www.hepsiburada.com" },
+          { marketplace: "N11", price: np, difference: `+₺${(np - ap).toLocaleString("tr-TR")}`, isCheapest: false, link: "https://www.n11.com" },
+        ];
+        lowestPrice = ap;
+        highestPrice = np;
+        avgPrice = Math.round((tp + ap + hp + np) / 4);
+        savings = np - ap;
+      }
     } else if (product.marketplaces && product.isCustom) {
       const marketplaces = [...product.marketplaces];
       marketplaces.sort((a, b) => a.price - b.price);

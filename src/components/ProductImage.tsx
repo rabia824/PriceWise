@@ -13,7 +13,9 @@ export default function ProductImage({ title, className, ...props }: ProductImag
   // 1. High-fidelity specific fallback images for presentation safety
   let fallbackImage = "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=600"; // default genel alışveriş resmi
 
-  if (productName.includes("termos") || productName.includes("stanley")) {
+  if (productName.includes("sinoz") || productName.includes("gunes") || productName.includes("güneş") || productName.includes("krem")) {
+    fallbackImage = "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?q=80&w=600";
+  } else if (productName.includes("termos") || productName.includes("stanley")) {
     fallbackImage = "https://images.unsplash.com/photo-1619814406859-99a38f3876be?q=80&w=600";
   } else if (productName.includes("krem") || productName.includes("güneş") || productName.includes("sunscreen")) {
     fallbackImage = "https://images.unsplash.com/photo-1556228720-195a672e8a03?q=80&w=600";

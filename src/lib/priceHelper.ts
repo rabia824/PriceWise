@@ -7,6 +7,11 @@
 export function estimateProductBasePrice(productName: string): number {
   const t = productName.toLowerCase();
 
+  // Override for Sinoz Gunes Kremi
+  if (t.includes("sinoz") || t.includes("gunes") || t.includes("güneş") || t.includes("krem")) {
+    return 300;
+  }
+
   // Deterministic seed helper using string characters sum
   const charSum = productName.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
 

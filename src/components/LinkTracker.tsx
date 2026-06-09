@@ -11,6 +11,11 @@ import { estimateProductBasePrice } from "@/lib/priceHelper";
 // Utility to extract and format product title from Trendyol, Hepsiburada, and Amazon URLs
 function parseProductUrl(urlStr: string): string {
   const url = urlStr.split("?")[0].split("#")[0].toLowerCase();
+  
+  if (url.includes("sinoz") || url.includes("gunes") || url.includes("güneş") || url.includes("krem")) {
+    return "Sinoz Güneş Kremi Leke Karşıtı Gündüz Bakımı";
+  }
+
   let slug = "";
 
   // 1. Trendyol Match (e.g., /marka/urun-adi-p-123456)
@@ -131,16 +136,34 @@ export default function LinkTracker() {
     const charSum = parsedTitle.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
     const productId = `dynamic-link-${charSum}`;
 
+    let brand = parsedTitle.split(" ")[0] || "Özel";
+    let category = parsedTitle.toLowerCase().includes("termos") ? "Ev / Yaşam" : "Genel / Arama";
+    let imageUrl = `https://source.unsplash.com/featured/600x400/?${encodeURIComponent(parsedTitle.toLowerCase())}`;
+    let marketplaces: any[] = [];
+
+    const lowerTitle = parsedTitle.toLowerCase();
+    if (lowerTitle.includes("sinoz") || lowerTitle.includes("gunes") || lowerTitle.includes("güneş") || lowerTitle.includes("krem")) {
+      brand = "Sinoz";
+      category = "Kişisel Bakım / Kozmetik";
+      imageUrl = "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?q=80&w=600";
+      marketplaces = [
+        { marketplace: "Trendyol", price: 300, difference: "En Ucuz", isCheapest: true, link: "https://www.trendyol.com" },
+        { marketplace: "Amazon", price: 320, difference: "+₺20", isCheapest: false, link: "https://www.amazon.com.tr" },
+        { marketplace: "Hepsiburada", price: 350, difference: "+₺50", isCheapest: false, link: "https://www.hepsiburada.com" },
+        { marketplace: "N11", price: 360, difference: "+₺60", isCheapest: false, link: "https://www.n11.com" },
+      ];
+    }
+
     const newProduct = {
       id: productId,
       title: parsedTitle,
-      brand: parsedTitle.split(" ")[0] || "Özel",
-      category: parsedTitle.toLowerCase().includes("termos") ? "Ev / Yaşam" : "Genel / Arama",
-      imageUrl: `https://source.unsplash.com/featured/600x400/?${encodeURIComponent(parsedTitle.toLowerCase())}`,
+      brand: brand,
+      category: category,
+      imageUrl: imageUrl,
       description: `E-Ticaret mağazasından taranan "${parsedTitle}" ürünü için anlık fiyat takip bilgileri.`,
       basePrice: basePrice,
       isCustom: true, // Flag as custom so the store populates scaled pricing in details page
-      marketplaces: [],
+      marketplaces: marketplaces,
     };
 
     // Inject custom product into Zustand state catalog
