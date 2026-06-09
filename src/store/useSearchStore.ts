@@ -273,20 +273,59 @@ export const useSearchStore = create<SearchState>((set, get) => ({
   getProductDetails: async (id, userId) => {
     let product = get().products.find((p) => p.id === id);
 
-    // Catch / fallback for dynamic search cards
+    // Catch / fallback for dynamic search cards and links
     if (!product && id.includes("dynamic")) {
-      const lastQuery = get().searchQuery || "ürün";
-      const queryTitle = lastQuery.trim().charAt(0).toUpperCase() + lastQuery.trim().slice(1);
-      const generatedPrice = estimateProductBasePrice(lastQuery);
+      let queryTitle = "Ürün";
+      let basePrice = 300;
+      let description = "PriceWise akıllı tarayıcısı tarafından anlık olarak analiz edilen dinamik ürün.";
+      let brand = "PriceWise AI";
+      let category = "Genel / Arama";
+      let imageUrl = "";
+
+      if (id.startsWith("dynamic-link-")) {
+        const slug = id.substring("dynamic-link-".length);
+        // Clean slug: replace all - with space, capitalize each word
+        const cleaned = decodeURIComponent(slug).replace(/[-_]+/g, " ").trim();
+        queryTitle = cleaned
+          .split(/\s+/)
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(" ");
+      } else {
+        const lastQuery = get().searchQuery || "ürün";
+        queryTitle = lastQuery.trim().charAt(0).toUpperCase() + lastQuery.trim().slice(1);
+      }
+
+      const lowerTitle = queryTitle.toLowerCase();
+      const lowerId = id.toLowerCase();
+      const isSinoz = lowerTitle.includes("sinoz") || lowerTitle.includes("krem") || lowerTitle.includes("gunes") || lowerTitle.includes("güneş") ||
+                      lowerId.includes("sinoz") || lowerId.includes("krem") || lowerId.includes("gunes") || lowerId.includes("güneş");
+
+      if (isSinoz) {
+        queryTitle = "Sinoz Güneş Kremi Leke Karşıtı Gündüz Bakımı";
+        basePrice = 300;
+        imageUrl = "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?q=80&w=600";
+        category = "Kişisel Bakım / Kozmetik";
+        brand = "Sinoz";
+        description = "Sinoz leke karşıtı, yüksek korumalı gündüz bakım kremi.";
+      } else if (lowerTitle.includes("termos") || lowerTitle.includes("stanley")) {
+        imageUrl = "https://images.unsplash.com/photo-1619814406859-99a38f3876be?q=80&w=600";
+        category = "Ev / Yaşam";
+        brand = "Stanley";
+        basePrice = estimateProductBasePrice(queryTitle);
+      } else {
+        imageUrl = `https://source.unsplash.com/featured/600x400/?${encodeURIComponent(queryTitle.toLowerCase())}`;
+        basePrice = estimateProductBasePrice(queryTitle);
+      }
 
       product = {
         id,
         title: queryTitle,
-        brand: "PriceWise AI",
-        category: "Genel / Arama",
-        imageUrl: `https://source.unsplash.com/featured/600x400/?${encodeURIComponent(lastQuery.trim().toLowerCase())}`,
-        description: `PriceWise akıllı tarayıcısı tarafından anlık olarak analiz edilen dinamik ${lastQuery.trim().toLowerCase()}.`,
-        basePrice: generatedPrice,
+        brand: brand,
+        category: category,
+        imageUrl: imageUrl,
+        description: description,
+        basePrice: basePrice,
+        marketplaces: [],
       };
     }
 
@@ -303,7 +342,9 @@ export const useSearchStore = create<SearchState>((set, get) => ({
 
     if (product.id.includes("dynamic")) {
       const lowerTitle = product.title.toLowerCase();
-      if (lowerTitle.includes("sinoz") || lowerTitle.includes("gunes") || lowerTitle.includes("güneş") || lowerTitle.includes("krem")) {
+      const lowerId = product.id.toLowerCase();
+      if (lowerTitle.includes("sinoz") || lowerTitle.includes("gunes") || lowerTitle.includes("güneş") || lowerTitle.includes("krem") ||
+          lowerId.includes("sinoz") || lowerId.includes("gunes") || lowerId.includes("güneş") || lowerId.includes("krem")) {
         formattedMarketplaces = [
           { marketplace: "Trendyol", price: 300, difference: "En Ucuz", isCheapest: true, link: "https://www.trendyol.com" },
           { marketplace: "Amazon", price: 320, difference: "+₺20", isCheapest: false, link: "https://www.amazon.com.tr" },

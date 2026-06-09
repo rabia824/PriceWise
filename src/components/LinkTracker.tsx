@@ -132,9 +132,20 @@ export default function LinkTracker() {
     const parsedTitle = parseProductUrl(trimmedLink);
     const basePrice = estimateProductBasePrice(parsedTitle);
     
-    // Create unique product ID based on title
-    const charSum = parsedTitle.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
-    const productId = `dynamic-link-${charSum}`;
+    // Create unique product ID based on title slug
+    const urlWithoutQuery = trimmedLink.split("?")[0].split("#")[0].trim();
+    let slug = "";
+    const matchP = urlWithoutQuery.match(/(.*)(?:-p-|\/p-)/i);
+    if (matchP && matchP[1]) {
+      const parts = matchP[1].split("/");
+      slug = parts[parts.length - 1];
+    }
+    if (!slug) {
+      const parts = urlWithoutQuery.split("/");
+      slug = parts[parts.length - 1] || "urun";
+    }
+    const cleanIdSlug = slug.toLowerCase().replace(/[^a-z0-9-]/g, "-").replace(/-+/g, "-");
+    const productId = `dynamic-link-${cleanIdSlug}`;
 
     let brand = parsedTitle.split(" ")[0] || "Özel";
     let category = parsedTitle.toLowerCase().includes("termos") ? "Ev / Yaşam" : "Genel / Arama";
