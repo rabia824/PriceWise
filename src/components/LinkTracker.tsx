@@ -140,6 +140,7 @@ export default function LinkTracker() {
       description: `E-Ticaret mağazasından taranan "${parsedTitle}" ürünü için anlık fiyat takip bilgileri.`,
       basePrice: basePrice,
       isCustom: true, // Flag as custom so the store populates scaled pricing in details page
+      marketplaces: [],
     };
 
     // Inject custom product into Zustand state catalog

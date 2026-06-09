@@ -256,6 +256,7 @@ export const useSearchStore = create<SearchState>((set, get) => ({
         imageUrl: `https://source.unsplash.com/featured/600x400/?${encodeURIComponent(queryVal.trim().toLowerCase())}`,
         description: `PriceWise akıllı tarayıcısı tarafından anlık olarak analiz edilen dinamik ${queryVal.trim().toLowerCase()}.`,
         basePrice: generatedPrice,
+        marketplaces: [],
       };
 
       // Append to store products catalog so it exists for detailed page routing

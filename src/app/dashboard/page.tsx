@@ -289,9 +289,9 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {customProducts.map((p) => {
                 // Find cheapest option and lowest price
-                const sortedMarketplaces = [...p.marketplaces].sort((a, b) => a.price - b.price);
-                const cheapestMarket = sortedMarketplaces[0].marketplace;
-                const lowestPrice = sortedMarketplaces[0].price;
+                const sortedMarketplaces = [...(p.marketplaces || [])].sort((a, b) => a.price - b.price);
+                const cheapestMarket = sortedMarketplaces[0]?.marketplace || "Bilinmiyor";
+                const lowestPrice = sortedMarketplaces[0]?.price || 0;
 
                 return (
                   <div
